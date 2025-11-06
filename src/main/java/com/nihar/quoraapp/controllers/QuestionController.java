@@ -6,10 +6,8 @@ import com.nihar.quoraapp.dto.QuestionResponseDTO;
 import com.nihar.quoraapp.repositories.QuestionRepository;
 import com.nihar.quoraapp.services.IQuestionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -25,5 +23,12 @@ public class QuestionController {
                 .doOnError(error -> System.out.println("Error catching question :" + error));
     }
 
+    @GetMapping("/search")
+    public Flux<QuestionResponseDTO> searchQuestions(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return questionService.searchQuestions(query, page, size);
+    }
 
 }

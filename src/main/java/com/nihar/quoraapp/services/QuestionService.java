@@ -6,7 +6,9 @@ import com.nihar.quoraapp.dto.QuestionResponseDTO;
 import com.nihar.quoraapp.models.Question;
 import com.nihar.quoraapp.repositories.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -27,5 +29,14 @@ public class QuestionService implements IQuestionService{
                 .map(QuestionAdapter::toQuestionResponseDTO)
                 .doOnSuccess(response -> System.out.println("Question created successfully: " + response))
                 .doOnError(error -> System.out.println("Error catching question :" + error));
+    }
+
+    @Override
+    public Flux<QuestionResponseDTO> searchQuestions(String searchTerm, int offset, int page) {
+        System.out.println(searchTerm + offset + page);
+        return questionRepository.findByTitleOrContentContainingIgnoreCase(searchTerm, PageRequest.of(offset, page))
+                .map(QuestionAdapter::toQuestionResponseDTO)
+                .doOnError(error -> System.out.println("Error searching questions: " + error))
+                .doOnComplete(()-> System.out.println("Question searched successfully"));
     }
 }
