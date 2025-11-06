@@ -5,8 +5,10 @@ import com.nihar.quoraapp.dto.QuestionRequestDTO;
 import com.nihar.quoraapp.dto.QuestionResponseDTO;
 import com.nihar.quoraapp.models.Question;
 import com.nihar.quoraapp.repositories.QuestionRepository;
+import com.nihar.quoraapp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,10 +35,29 @@ public class QuestionService implements IQuestionService{
 
     @Override
     public Flux<QuestionResponseDTO> searchQuestions(String searchTerm, int offset, int page) {
-        System.out.println(searchTerm + offset + page);
         return questionRepository.findByTitleOrContentContainingIgnoreCase(searchTerm, PageRequest.of(offset, page))
                 .map(QuestionAdapter::toQuestionResponseDTO)
                 .doOnError(error -> System.out.println("Error searching questions: " + error))
                 .doOnComplete(()-> System.out.println("Question searched successfully"));
+    }
+
+    @Override
+    public Flux<QuestionResponseDTO> getAllQuestions(String cursor, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        if(!CursorUtils.isValidCursor(cursor)){
+            return questionRepository.findTop10ByOrderByCreatedAtAsc()
+                    .take(size)
+                    .map(QuestionAdapter::toQuestionResponseDTO)
+                    .doOnError(error -> System.out.println("Error Fetching questions: " + error))
+                    .doOnComplete(()-> System.out.println("Question Fetched successfully"));
+
+        }else{
+            LocalDateTime cursorTimeStamp = CursorUtils.parseCursor(cursor);
+            return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtAsc(cursorTimeStamp, pageable)
+                    .map(QuestionAdapter::toQuestionResponseDTO)
+                    .doOnError(error -> System.out.println("Error Fetching questions: " + error))
+                    .doOnComplete(()-> System.out.println("Question Fetched successfully"));
+        }
+
     }
 }
