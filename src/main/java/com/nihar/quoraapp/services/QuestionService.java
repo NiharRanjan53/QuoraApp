@@ -3,12 +3,16 @@ package com.nihar.quoraapp.services;
 import com.nihar.quoraapp.adapter.QuestionAdapter;
 import com.nihar.quoraapp.dto.QuestionRequestDTO;
 import com.nihar.quoraapp.dto.QuestionResponseDTO;
+import com.nihar.quoraapp.enums.TargetType;
+import com.nihar.quoraapp.events.ViewCountEvent;
 import com.nihar.quoraapp.models.Question;
+import com.nihar.quoraapp.producers.KafkaEventProducer;
 import com.nihar.quoraapp.repositories.QuestionRepository;
 import com.nihar.quoraapp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,6 +23,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class QuestionService implements IQuestionService{
     private final QuestionRepository questionRepository;
+    private final KafkaEventProducer kafkaEventProducer;
+
     @Override
     public Mono<QuestionResponseDTO> createQuestion(QuestionRequestDTO questionRequestDto) {
         Question question =  Question.builder()
@@ -59,5 +65,16 @@ public class QuestionService implements IQuestionService{
                     .doOnComplete(()-> System.out.println("Question Fetched successfully"));
         }
 
+    }
+    @Override
+    public Mono<QuestionResponseDTO> getQuestionById(String id) {
+        return questionRepository.findById(id)
+                .map(QuestionAdapter::toQuestionResponseDTO)
+                .doOnError(error -> System.out.println("Error fetching question: " + error))
+                .doOnSuccess(response -> {
+                    System.out.println("Question fetched successfully: " + response);
+                    ViewCountEvent viewCountEvent = new ViewCountEvent(id, TargetType.QUESTION, LocalDateTime.now());
+                    kafkaEventProducer.publishViewCountEvent(viewCountEvent);
+                });
     }
 }

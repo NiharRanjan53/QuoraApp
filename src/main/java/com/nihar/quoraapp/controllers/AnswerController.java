@@ -3,10 +3,7 @@ package com.nihar.quoraapp.controllers;
 import com.nihar.quoraapp.dto.AnswerRequestDTO;
 import com.nihar.quoraapp.dto.AnswerResponseDTO;
 import com.nihar.quoraapp.services.IAnswerService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 

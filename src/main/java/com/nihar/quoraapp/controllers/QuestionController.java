@@ -6,6 +6,7 @@ import com.nihar.quoraapp.dto.QuestionResponseDTO;
 import com.nihar.quoraapp.repositories.QuestionRepository;
 import com.nihar.quoraapp.services.IQuestionService;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,4 +37,10 @@ public class QuestionController {
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "10") int size){
         return questionService.getAllQuestions(cursor, size);
-    }}
+    }
+
+    @GetMapping("/{id}")
+    public Mono<QuestionResponseDTO> getQuestionById(@PathVariable String id){
+        return questionService.getQuestionById(id);
+    }
+}
