@@ -39,10 +39,10 @@ public class QuestionService implements IQuestionService{
                             .updatedAt(LocalDateTime.now())
                             .build();
         return questionRepository.save(question)
-                .map(savedQuestion -> {
-                    questionIndexService.createQuestionIndex(savedQuestion); // dumping the question to elasticsearch
-                    return QuestionAdapter.toQuestionResponseDTO(savedQuestion);
-                })
+                .flatMap(savedQuestion ->
+                    questionIndexService.createQuestionIndex(savedQuestion) // dumping the question to elasticsearch
+                            .thenReturn(QuestionAdapter.toQuestionResponseDTO(savedQuestion))
+                )
                 .doOnSuccess(response -> System.out.println("Question created successfully: " + response))
                 .doOnError(error -> System.out.println("Error catching question :" + error));
     }
@@ -87,7 +87,7 @@ public class QuestionService implements IQuestionService{
     }
 
     @Override
-    public List<QuestionElasticDocument> searchQuestionsByElasticsearch(String query) {
+    public Flux<QuestionElasticDocument> searchQuestionsByElasticsearch(String query) {
         return questionDocumentRepository.findByTitleContainingOrContentContaining(query, query);
     }
 }

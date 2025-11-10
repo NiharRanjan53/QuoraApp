@@ -1,7 +1,9 @@
 package com.nihar.quoraapp.services;
 
 import com.nihar.quoraapp.models.Question;
+import com.nihar.quoraapp.models.QuestionElasticDocument;
+import reactor.core.publisher.Mono;
 
 public interface IQuestionIndexService {
-    void createQuestionIndex(Question question) ;
+    Mono<QuestionElasticDocument> createQuestionIndex(Question question) ;
 }
