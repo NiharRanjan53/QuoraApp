@@ -7,3 +7,9 @@ spring:
       port: 27017
       database: quora_db
       auto-index-creation: true
+  elasticsearch:
+    uris: http://localhost:9200        # Elasticsearch endpoint (from Docker)
+    username: elastic                  # Default superuser
+    password: Nihar                 # Password from docker-compose
+#    connection-timeout: 5s             # Optional tuning
+#    socket-timeout: 10s                # Optional tuning
