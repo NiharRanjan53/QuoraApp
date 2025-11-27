@@ -1,15 +1,13 @@
 package com.nihar.quoraapp.models;
 
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,28 +17,22 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "answers")
-public class Answer {
+@Document(collection = "follows")
+@CompoundIndexes({
+        @CompoundIndex(name = "follower_followee_unique", def = "{'followerId': 1, 'followeeId': 1}", unique = true)
+})
+public class Follow {
     @Id
     private String id;
 
-    // Author of this answer (user id)
     @Indexed
-    private String authorId;
-
-    @NotBlank(message = "Content is required")
-    @Size(min = 10, max = 1000, message = "Content must be between 10 and 1000 characters")
-    private String content;
+    private String followerId;
 
     @Indexed
-    private String questionId;
-
+    private String followeeId;
 
     @CreatedDate
-    @Indexed
     private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
 }
+
+

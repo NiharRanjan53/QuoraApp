@@ -9,6 +9,7 @@ public class AnswerAdapter {
     public static AnswerResponseDTO toAnswerResponseDTO(Answer answer){
         return AnswerResponseDTO.builder()
                 .id(answer.getId())
+                .authorId(answer.getAuthorId())
                 .questionId(answer.getQuestionId())
                 .content(answer.getContent())
                 .createdAt(answer.getCreatedAt())

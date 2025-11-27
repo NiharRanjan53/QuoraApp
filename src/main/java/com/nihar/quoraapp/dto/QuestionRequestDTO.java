@@ -19,4 +19,8 @@ public class QuestionRequestDTO {
     @NotBlank(message = "Content is required")
     @Size(min = 10, max = 1000, message = "Content must be between 10 and 1000 characters.")
     private String content;
+
+    // User id of the author
+    @NotBlank(message = "Author ID is required")
+    private String authorId;
 }

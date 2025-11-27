@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionResponseDTO {
-    private String id;
-    private String authorId;
-    private String title;
-    private String content;
-    private LocalDateTime createdAt;
+public class FollowResponseDTO {
+    private String followerId;
+    private String followeeId;
+    private LocalDateTime followedAt;
 }
+
+

@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 public class AnswerResponseDTO {
     private String id;
 
+    private String authorId;
+
     private String questionId;
 
     private String content;

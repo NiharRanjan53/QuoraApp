@@ -36,6 +36,10 @@ public class User {
 
     private String bio;
 
+    // Social graph counters
+    private long followersCount;
+    private long followingCount;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

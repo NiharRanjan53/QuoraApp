@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,10 @@ import java.time.LocalDateTime;
 public class Question {
     @Id
     private String id;
+
+    // Author of this question (user id)
+    @Indexed
+    private String authorId;
 
     @NotBlank(message = "Title is Required.")
     @Size(min = 10, max = 100, message = "Title must be between 10 to 100 characters.")
